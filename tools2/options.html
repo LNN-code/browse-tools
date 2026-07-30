@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>自动浏览搜索详情设置</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="options-page">
+      <header class="page-header">
+        <div>
+          <h1>自动浏览搜索详情设置</h1>
+          <p id="pageStatusText">读取配置...</p>
+        </div>
+        <div class="header-actions">
+          <button id="resetButton" type="button">恢复当前站点默认值</button>
+          <button id="saveButton" type="button" class="primary">保存设置</button>
+        </div>
+      </header>
+
+      <section class="settings-band" aria-label="站点与浏览配置">
+        <div class="section-head">
+          <h2>站点与浏览</h2>
+          <div class="site-switch" role="group" aria-label="配置站点">
+            <button type="button" data-profile="zhipin">BOSS 直聘</button>
+            <button type="button" data-profile="zhaopin">智联招聘</button>
+            <button type="button" data-profile="generic">通用站点</button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="field span-2">
+            <span>左侧列表项 CSS 选择器</span>
+            <input id="selectorInput" type="text" value="a[href]" spellcheck="false">
+          </label>
+
+          <label class="field span-2">
+            <span>详情区域 CSS 选择器（可选）</span>
+            <input id="detailContainerInput" type="text" placeholder="自动识别岗位详情区域" spellcheck="false">
+          </label>
+
+          <label class="field">
+            <span>浏览条数</span>
+            <input id="countInput" type="number" min="1" max="999" value="10">
+          </label>
+
+          <label class="field">
+            <span>起始序号</span>
+            <input id="startIndexInput" type="number" min="1" max="999" value="1">
+          </label>
+
+          <fieldset class="segmented span-2">
+            <legend>下一条模式</legend>
+            <label>
+              <input type="radio" name="nextMode" value="auto" checked>
+              <span>自动下一条</span>
+            </label>
+            <label>
+              <input type="radio" name="nextMode" value="manual">
+              <span>手动下一条</span>
+            </label>
+          </fieldset>
+
+          <label class="toggle">
+            <input id="saveToLocalInput" type="checkbox" checked>
+            <span>保存详情 Markdown 到本地</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-band" aria-label="等待配置">
+        <div class="section-head">
+          <h2>等待配置</h2>
+        </div>
+
+        <div class="form-grid">
+          <label class="field">
+            <span>点击前等待 ms</span>
+            <input id="beforeClickDelayInput" type="number" min="0" max="10000" value="800">
+          </label>
+
+          <label class="field">
+            <span>页面加载后等待 ms</span>
+            <input id="afterLoadDelayInput" type="number" min="0" max="15000" value="1200">
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-band" aria-label="匹配评分与自动沟通">
+        <div class="section-head">
+          <div>
+            <h2>匹配评分与自动沟通</h2>
+            <p id="resumeStatusText">未导入简历</p>
+          </div>
+          <button id="clearResumeButton" type="button">清空简历</button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field span-2">
+            <span>DeepSeek API Key</span>
+            <input id="deepseekKeyInput" type="password" autocomplete="off" placeholder="sk-..." spellcheck="false">
+          </label>
+
+          <label class="toggle">
+            <input id="autoCommunicateInput" type="checkbox">
+            <span>达标自动沟通</span>
+          </label>
+
+          <label class="field">
+            <span>匹配阈值</span>
+            <input id="matchThresholdInput" type="number" min="0" max="100" value="80">
+          </label>
+
+          <label class="field span-2">
+            <span>上传简历（PDF / MD / TXT）</span>
+            <input id="resumeFileInput" type="file" accept=".pdf,.md,.markdown,.txt,text/markdown,text/plain,application/pdf">
+          </label>
+
+          <label class="field span-2">
+            <span>简历 Markdown / 文本</span>
+            <textarea id="resumeTextInput" rows="12" placeholder="可直接粘贴 Markdown 简历，或上传 PDF 自动提取文本" spellcheck="false"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <p id="messageText" class="message" role="status"></p>
+    </main>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

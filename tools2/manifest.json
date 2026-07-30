@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Search Detail Auto Browser",
+  "description": "在搜索列表页按顺序打开详情页，缓慢下拉到底后返回列表，并在当前页结束后提示手动翻页。",
+  "version": "1.2.1",
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "https://api.deepseek.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "自动浏览搜索详情",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

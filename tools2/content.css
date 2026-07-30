@@ -1,0 +1,89 @@
+#sda-browser-overlay {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147483647;
+  width: min(320px, calc(100vw - 36px));
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  padding: 12px;
+  color: #172033;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+#sda-browser-overlay * {
+  box-sizing: border-box;
+}
+
+.sda-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.sda-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.sda-title span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sda-status {
+  color: #4b5563;
+  word-break: break-word;
+}
+
+.sda-progress {
+  margin-top: 8px;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.sda-stop,
+.sda-continue {
+  flex: 0 0 auto;
+  min-width: 54px;
+  min-height: 28px;
+  border: 1px solid #c2cad8;
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: #263244;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sda-continue {
+  display: none;
+  border-color: #2563eb;
+  color: #ffffff;
+  background: #2563eb;
+}
+
+.sda-stop:hover,
+.sda-continue:hover {
+  background: #eef2f7;
+}
+
+.sda-continue:hover {
+  background: #1d4ed8;
+}
+
+.sda-target-highlight {
+  outline: 3px solid rgba(37, 99, 235, 0.8) !important;
+  outline-offset: 3px !important;
+}

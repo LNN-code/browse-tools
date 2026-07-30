@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>自动浏览搜索详情</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <div>
+          <h1>自动浏览搜索详情</h1>
+          <p id="statusText">读取当前标签页状态...</p>
+        </div>
+        <button id="optionsButton" type="button" class="icon-button" title="打开设置页" aria-label="打开设置页">设置</button>
+      </header>
+
+      <section class="summary-panel" aria-label="当前配置">
+        <div class="panel-head">
+          <h2>当前配置</h2>
+          <button id="refreshButton" type="button" class="ghost">刷新</button>
+        </div>
+        <p id="configSummaryText">正在读取配置...</p>
+        <p id="resumeStatusText">正在读取简历状态...</p>
+      </section>
+
+      <div class="actions">
+        <button id="startButton" type="button" class="primary">开始</button>
+        <button id="stopButton" type="button">停止</button>
+        <button id="nextButton" type="button" class="ghost">下一条</button>
+      </div>
+
+      <section class="match-panel" aria-label="岗位匹配评分">
+        <div class="panel-head">
+          <h2>岗位匹配评分</h2>
+          <button id="scoreButton" type="button" class="ghost">评分当前岗位</button>
+        </div>
+        <article id="matchResult" class="match-result" hidden></article>
+      </section>
+
+      <p id="messageText" class="message" role="status"></p>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

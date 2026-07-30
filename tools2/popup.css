@@ -1,0 +1,164 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #1f2937;
+  background: linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  margin: 0;
+  background: transparent;
+}
+
+.popup {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.header,
+.panel-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+h2 {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+#statusText,
+#configSummaryText,
+#resumeStatusText,
+.message {
+  color: #607085;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#configSummaryText,
+#resumeStatusText {
+  word-break: break-word;
+}
+
+.summary-panel,
+.match-panel {
+  display: grid;
+  gap: 9px;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  padding: 11px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+button {
+  min-height: 36px;
+  border: 1px solid #b9c4d4;
+  border-radius: 7px;
+  padding: 7px 12px;
+  font: inherit;
+  font-weight: 700;
+  color: #263244;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f2f6fb;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+button.primary {
+  border-color: #2563eb;
+  color: #ffffff;
+  background: #2563eb;
+}
+
+button.primary:hover {
+  background: #1d4ed8;
+}
+
+button.ghost,
+.icon-button {
+  min-height: 30px;
+  padding-inline: 10px;
+  border-color: #c9d3e0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.message {
+  min-height: 18px;
+}
+
+.match-result {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+  color: #1f2937;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.match-result .score {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.match-result .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.muted {
+  color: #607085;
+}
+
+.error {
+  color: #b42318;
+}
