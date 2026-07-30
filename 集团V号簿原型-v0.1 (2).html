@@ -1,0 +1,3577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>集团V号簿</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', SimHei, Arial, Helvetica, sans-serif;
+            background-color: #f8fafc;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+        
+        /* 通用样式 */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        
+        /* 顶部导航栏 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 下拉菜单 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            min-width: 120px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            z-index: 100;
+            margin-top: 4px;
+        }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #414755;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+        }
+        
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
+        
+        /* 拨号悬浮窗 */
+        .dialer-floating-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4);
+            cursor: pointer;
+            z-index: 98;
+            font-size: 24px;
+        }
+        
+        .dialer-floating-btn:hover {
+            background-color: #1e40af;
+        }
+        
+        /* 来电弹窗关闭按钮 */
+        .incoming-call-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .incoming-call-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+        }
+        
+        .incoming-call-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .incoming-call-close i {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        /* 来电悬浮窗 */
+        .call-floating {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            z-index: 98;
+            max-width: 200px;
+        }
+        
+        .call-floating-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .call-floating-info {
+            flex: 1;
+        }
+        
+        .call-floating-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .call-floating-status {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        /* 通话中页面 */
+        .call-active-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0d2137 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 24px 40px;
+            z-index: 1001;
+        }
+        
+        .call-active-header {
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .call-active-status {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .call-active-timer {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .call-active-content {
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .call-active-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 600;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+        }
+        
+        .call-active-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .call-active-department {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .call-active-actions {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            width: 100%;
+            max-width: 320px;
+        }
+        
+        .call-active-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        
+        .call-active-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .call-active-icon:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+        
+        .call-active-icon.active {
+            background-color: #ffffff;
+            color: #1e3a5f;
+        }
+        
+        .call-active-btn span {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .call-active-hangup {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+        }
+        
+        .call-hangup-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .call-hangup-btn:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        .call-active-hangup span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* 等待接听页面 */
+        .call-waiting-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .call-waiting-header {
+            position: absolute;
+            top: 48px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .call-waiting-title {
+            font-size: 16px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .caller-info {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .caller-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 600;
+            color: #414755;
+            margin: 0 auto 16px;
+        }
+        
+        .caller-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .caller-department {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .call-waiting-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .call-waiting-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .call-waiting-btn:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        .call-waiting-btn i {
+            font-size: 24px;
+        }
+        
+        .call-waiting-btn span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* 拨号盘弹窗 */
+        .dialer-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .dialer-modal-content {
+            width: 100%;
+            max-width: 400px;
+            background-color: #ffffff;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        .dialer-header {
+            margin-bottom: 20px;
+        }
+        
+        .dialer-number {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+        
+        .dialer-features {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .dialer-feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f1f5f9;
+            color: #94a3b8;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .dialer-feature.active {
+            background-color: #e0f2fe;
+            color: #0284c7;
+            border-color: #0284c7;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+        }
+        
+        .dialer-feature i {
+            font-size: 16px;
+        }
+        
+        .dialer-keypad {
+            margin-bottom: 20px;
+        }
+        
+        .keypad-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .keypad-key {
+            width: 30%;
+            height: 56px;
+            border-radius: 12px;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 500;
+            color: #414755;
+            cursor: pointer;
+        }
+        
+        .keypad-key:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .dialer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dialer-action {
+            width: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .call-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #10b981;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .call-btn:hover {
+            background-color: #059669;
+        }
+        
+        .backspace {
+            font-size: 18px;
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 0;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 99;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .nav-item.active {
+            background-color: #eff6ff;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            color: #94a3b8;
+        }
+        
+        .nav-item.active .nav-icon {
+            color: #1d4ed8;
+        }
+        
+        .nav-text {
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+        
+        .nav-item.active .nav-text {
+            color: #1d4ed8;
+        }
+        
+        /* 页面内容 */
+        .page {
+            display: none;
+            padding-bottom: 80px;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* 通讯录页面 */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: #f2f4f7;
+        }
+        
+        .sync-text {
+            font-size: 12px;
+            color: #414755;
+        }
+        
+        .sync-progress {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0057c2;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #c1c6d74d;
+            border-radius: 12px;
+            margin: 8px 16px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #0057c2;
+            border-radius: 12px;
+            width: 84%;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #e0e3e6;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 16px;
+            position: relative;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #414755;
+            outline: none;
+        }
+        
+        .search-icon {
+            margin-right: 12px;
+            color: #94a3b8;
+        }
+        
+        .voice-icon {
+            position: absolute;
+            right: 16px;
+            color: #94a3b8;
+        }
+        
+        .recent-contacts {
+            padding: 16px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #414755;
+            margin-bottom: 12px;
+        }
+        
+        .contact-avatars {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .avatar-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .avatar-name {
+            font-size: 12px;
+            color: #414755;
+        }
+        
+        .department-section {
+            margin-bottom: 24px;
+        }
+        
+        .department-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: #f7f9fc;
+            cursor: pointer;
+        }
+        
+        .department-toggle {
+            margin-left: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .department-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .department-content {
+            overflow: hidden;
+            max-height: 500px;
+            transition: max-height 0.3s ease;
+        }
+        
+        .department-content.collapsed {
+            max-height: 0;
+        }
+        
+        .department-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #414755;
+        }
+        
+        .department-count {
+            font-size: 12px;
+            color: #94a3b8;
+            background-color: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        
+        .contact-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .contact-details {
+            flex: 1;
+        }
+        
+        .contact-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .contact-position {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .contact-call {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1d4ed8;
+        }
+        
+        /* 通话记录页面 */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            overflow-x: auto;
+        }
+        
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            background-color: #f1f5f9;
+            font-size: 12px;
+            color: #414755;
+            white-space: nowrap;
+        }
+        
+        .filter-btn.active {
+            background-color: #1d4ed8;
+            color: white;
+        }
+        
+        .call-card {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 16px;
+        }
+        
+        .call-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .call-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .call-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .call-details {
+            flex: 1;
+        }
+        
+        .call-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .call-department {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .call-time {
+            text-align: right;
+        }
+        
+        .call-time-text {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .call-duration {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .call-tags {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        
+        .call-tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .tag-project {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .tag-follow {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
+        
+        .tag-compliance {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        .tag-external {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .call-summary {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #414755;
+            line-height: 1.4;
+        }
+        
+        .call-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        
+        .call-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .call-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .call-status {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .call-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .call-action-btn {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            font-size: 14px;
+            color: #414755;
+            text-align: center;
+        }
+        
+        /* AI纪要页面 */
+        .pending-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background-color: #f2f4f7;
+            margin-bottom: 16px;
+        }
+        
+        .pending-info {
+            flex: 1;
+        }
+        
+        .pending-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .pending-subtitle {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        .encrypted-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            background-color: #10b981;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .summary-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin: 0 16px 16px;
+        }
+        
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .summary-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .summary-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .summary-details {
+            flex: 1;
+        }
+        
+        .summary-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .summary-meta {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .summary-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            background-color: #fef3c7;
+            color: #d97706;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .summary-status.confirmed {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .summary-content {
+            font-size: 13px;
+            color: #414755;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        
+        .summary-action {
+            text-align: right;
+        }
+        
+        .summary-action-btn {
+            font-size: 14px;
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+        
+        .audio-player {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .player-time {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        .player-progress {
+            flex: 1;
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+            margin: 0 12px;
+            position: relative;
+        }
+        
+        .player-progress-fill {
+            height: 100%;
+            background-color: #1d4ed8;
+            border-radius: 2px;
+            width: 30%;
+        }
+        
+        .player-progress-handle {
+            position: absolute;
+            top: -6px;
+            left: 30%;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+        }
+        
+        .player-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin: 16px 0;
+        }
+        
+        .player-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .player-btn-play {
+            background-color: #1d4ed8;
+            color: white;
+        }
+        
+        .player-btn-other {
+            background-color: #e2e8f0;
+            color: #414755;
+        }
+        
+        .player-markers {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            overflow-x: auto;
+        }
+        
+        .player-marker {
+            padding: 4px 12px;
+            border-radius: 12px;
+            background-color: #e2e8f0;
+            font-size: 11px;
+            color: #414755;
+            white-space: nowrap;
+        }
+        
+        .player-marker.active {
+            background-color: #1d4ed8;
+            color: white;
+        }
+        
+        .structured-summary {
+            margin: 16px 0;
+        }
+        
+        .summary-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-heading {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-heading::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background-color: #1d4ed8;
+            border-radius: 2px;
+        }
+        
+        .summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .summary-item {
+            font-size: 13px;
+            color: #414755;
+            line-height: 1.4;
+            padding-left: 12px;
+            position: relative;
+        }
+        
+        .summary-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #94a3b8;
+        }
+        
+        .decision-quote {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #414755;
+            line-height: 1.4;
+            border-left: 4px solid #1d4ed8;
+        }
+        
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .action-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        
+        .action-details {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .action-meta {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        
+        .summary-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .export-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            font-size: 14px;
+            color: #414755;
+        }
+        
+        .confirm-btn {
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #1d4ed8;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        /* 我的设置页面 */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 16px;
+            background-color: #ffffff;
+            margin-bottom: 16px;
+        }
+        
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .user-department {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        
+        .user-id {
+            font-size: 12px;
+            color: #94a3b8;
+            background-color: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .settings-section {
+            background-color: #ffffff;
+            margin-bottom: 16px;
+        }
+        
+        .settings-section-header {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #414755;
+            background-color: #f8fafc;
+        }
+        
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .settings-item-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            color: #414755;
+        }
+        
+        .settings-item-text {
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        
+        .settings-item-value {
+            font-size: 14px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toggle-switch {
+            width: 48px;
+            height: 24px;
+            border-radius: 12px;
+            background-color: #e2e8f0;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .toggle-switch.active {
+            background-color: #1d4ed8;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            left: 26px;
+        }
+        
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-allowed {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .status-denied {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .logout-section {
+            padding: 24px 16px;
+        }
+        
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: #dc2626;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .session-id {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* 联系人详情页面 */
+        .contact-detail-header {
+            background-color: #ffffff;
+            padding: 24px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .contact-detail-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+        
+        .contact-detail-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #10b981;
+            border: 3px solid white;
+        }
+        
+        .contact-detail-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        
+        .contact-detail-id {
+            font-size: 12px;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .contact-detail-position {
+            font-size: 14px;
+            color: #1d4ed8;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .contact-detail-department {
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .contact-detail-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .contact-detail-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .tag-core {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .tag-highfreq {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
+        
+        .tag-interview {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        .contact-actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .contact-action-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+        
+        .contact-action-btn.primary {
+            background-color: #1d4ed8;
+            color: white;
+        }
+        
+        .contact-action-icon {
+            font-size: 20px;
+        }
+        
+        .contact-action-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 24px 16px 16px;
+        }
+        
+        .call-summary-section {
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin: 0 16px 16px;
+            overflow: hidden;
+        }
+        
+        .call-summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .call-summary-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .encryption-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #10b981;
+        }
+        
+        .call-summary-item {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .call-summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .call-summary-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .call-summary-time {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .call-summary-duration {
+            font-size: 12px;
+            color: #94a3b8;
+            background-color: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .call-summary-content {
+            font-size: 13px;
+            color: #414755;
+            line-height: 1.4;
+        }
+        
+        .call-summary-content::before {
+            content: 'AI 摘要：';
+            font-weight: 500;
+            color: #1d4ed8;
+        }
+        
+        .related-docs-section {
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin: 0 16px;
+            overflow: hidden;
+        }
+        
+        .related-docs-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .related-docs-item:last-child {
+            border-bottom: none;
+        }
+        
+        .doc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .doc-icon.pdf {
+            background-color: #dc2626;
+        }
+        
+        .doc-icon.docx {
+            background-color: #0284c7;
+        }
+        
+        .doc-icon.xlsx {
+            background-color: #16a34a;
+        }
+        
+        .doc-info {
+            flex: 1;
+        }
+        
+        .doc-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .doc-meta {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* 纪要详情页面 */
+        .minute-detail-header {
+            padding: 16px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .minute-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .minute-meta {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        
+        .minute-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .minute-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .minute-tag.project {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .minute-tag.encrypted {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .minute-audio {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px;
+        }
+        
+        .minute-section {
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin: 0 16px 16px;
+            padding: 16px;
+        }
+        
+        .minute-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .minute-section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        .minute-section-title.points::before {
+            background-color: #3b82f6;
+        }
+        
+        .minute-section-title.decisions::before {
+            background-color: #f59e0b;
+        }
+        
+        .minute-section-title.actions::before {
+            background-color: #10b981;
+        }
+        
+        .minute-section-title.timeline::before {
+            background-color: #8b5cf6;
+        }
+        
+        .minute-section-title.transcript::before {
+            background-color: #ec4899;
+        }
+        
+        .minute-content {
+            font-size: 14px;
+            color: #414755;
+            line-height: 1.5;
+        }
+        
+        .decision-item {
+            background-color: #fef3c7;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .decision-quote {
+            font-size: 14px;
+            color: #414755;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .decision-maker {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .action-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .action-checkbox {
+            margin-top: 2px;
+        }
+        
+        .action-info {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .action-meta {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .timeline-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 20px;
+            bottom: -16px;
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-time {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        
+        .timeline-title {
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        
+        .transcript-item {
+            margin-bottom: 16px;
+        }
+        
+        .transcript-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .transcript-time {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+        }
+        
+        .transcript-speaker {
+            font-size: 12px;
+            font-weight: 500;
+            color: #1a1a1a;
+            background-color: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .transcript-content {
+            font-size: 14px;
+            color: #414755;
+            line-height: 1.5;
+            padding-left: 40px;
+        }
+        
+        .minute-actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+        }
+        
+        .minute-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            font-size: 14px;
+            color: #414755;
+        }
+        
+        /* 来电弹窗 */
+        .incoming-call {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 320px;
+            z-index: 1000;
+            padding: 24px;
+        }
+        
+        .caller-info {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .caller-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0 auto 16px;
+        }
+        
+        .caller-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .caller-department {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        
+        .caller-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .call-summary-popup {
+            background-color: #fef3c7;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .call-summary-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #d97706;
+            margin-bottom: 4px;
+        }
+        
+        .call-summary-text {
+            font-size: 13px;
+            color: #78350f;
+            line-height: 1.4;
+        }
+        
+        .call-actions-popup {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .call-action-btn-popup {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .call-action-btn-popup.reject {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .call-action-btn-popup.accept {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        
+        /* 无结果页面 */
+        .no-results {
+            padding: 48px 16px;
+            text-align: center;
+        }
+        
+        .no-results-text {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 375px) {
+            .container {
+                padding: 0 12px;
+            }
+            
+            .header {
+                padding: 12px;
+            }
+            
+            .header-title {
+                font-size: 16px;
+            }
+            
+            .bottom-nav {
+                padding: 8px 0;
+            }
+            
+            .nav-item {
+                padding: 6px 12px;
+            }
+            
+            .nav-icon {
+                font-size: 18px;
+            }
+            
+            .nav-text {
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 通讯录页面 -->
+    <div id="directory" class="page active">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-bars"></i>
+                <div class="header-title">集团V号簿</div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        
+        <div class="sync-status">
+            <div class="sync-text">正在安全同步通讯录...</div>
+            <div class="sync-progress">84%</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="搜索姓名、拼音或部门...">
+            <i class="fas fa-microphone voice-icon"></i>
+        </div>
+        
+        <div class="recent-contacts">
+            <div class="section-title">最近联系人</div>
+            <div class="contact-avatars">
+                <div class="avatar">
+                    <div class="avatar-img">ZS</div>
+                    <div class="avatar-name">张莎莎</div>
+                </div>
+                <div class="avatar">
+                    <div class="avatar-img">LM</div>
+                    <div class="avatar-name">李麦克</div>
+                </div>
+                <div class="avatar">
+                    <div class="avatar-img">WQ</div>
+                    <div class="avatar-name">王强</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="department-section">
+            <div class="department-header">
+                <div class="department-name">
+                    领导层
+                    <span class="department-count">4 位成员</span>
+                </div>
+                <div class="department-toggle">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="department-content">
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <div class="contact-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="contact-details">
+                            <div class="contact-name">万斯</div>
+                            <div class="contact-position">首席合规官</div>
+                        </div>
+                    </div>
+                    <div class="contact-call">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <div class="contact-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="contact-details">
+                            <div class="contact-name">罗德</div>
+                            <div class="contact-position">运营高级总监</div>
+                        </div>
+                    </div>
+                    <div class="contact-call">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="department-section">
+            <div class="department-header">
+                <div class="department-name">
+                    全球工程部
+                    <span class="department-count">28 位成员</span>
+                </div>
+                <div class="department-toggle">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="department-content">
+            </div>
+        </div>
+        
+        <div class="department-section">
+            <div class="department-header">
+                <div class="department-name">
+                    市场与品牌部
+                    <span class="department-count">12 位成员</span>
+                </div>
+                <div class="department-toggle">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="department-content">
+            </div>
+        </div>
+        
+        <!-- 拨号悬浮窗 -->
+        <div id="dialer-floating-btn" class="dialer-floating-btn">
+            <i class="fas fa-phone"></i>
+        </div>
+    </div>
+    
+    <!-- 通话记录页面 -->
+    <div id="calls" class="page">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-bars"></i>
+                <div class="header-title">集团V号簿</div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        
+        <div class="filter-bar">
+            <div class="filter-btn active">
+                <i class="fas fa-calendar-day"></i>
+                <span>今天</span>
+            </div>
+            <div class="filter-btn">
+                <i class="fas fa-tags"></i>
+                <span>标签</span>
+            </div>
+            <div class="filter-btn">
+                <i class="fas fa-building"></i>
+                <span>内部</span>
+            </div>
+            <div class="filter-btn">
+                <i class="fas fa-globe"></i>
+                <span>外部</span>
+            </div>
+        </div>
+        
+        <div class="call-card">
+            <div class="call-header">
+                <div class="call-info">
+                    <div class="call-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="call-details">
+                        <div class="call-name">陈思雅</div>
+                        <div class="call-department">全球战略部</div>
+                    </div>
+                </div>
+                <div class="call-time">
+                    <div class="call-time-text">14:22 PM</div>
+                    <div class="call-duration">12分 45秒</div>
+                </div>
+            </div>
+            <div class="call-tags">
+                <div class="call-tag tag-project">项目 X</div>
+                <div class="call-tag tag-follow">跟进</div>
+            </div>
+            <div class="call-summary">
+                "已确认第三季度的预算分配，并安排了下周二的利益相关者审查会议。"
+            </div>
+            <div class="call-footer">
+                <div class="call-stats">
+                    <div class="call-stat">
+                        <i class="fas fa-lock"></i>
+                        <span>已加密</span>
+                    </div>
+                    <div class="call-stat">
+                        <i class="fas fa-microphone"></i>
+                        <span>已录音</span>
+                    </div>
+                </div>
+                <div class="call-status">AI 纪要已完成</div>
+            </div>
+        </div>
+        
+        <div class="call-card">
+            <div class="call-header">
+                <div class="call-info">
+                    <div class="call-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="call-details">
+                        <div class="call-name">马库斯·米勒</div>
+                        <div class="call-department">合规与风险部</div>
+                    </div>
+                </div>
+                <div class="call-time">
+                    <div class="call-time-text">11:05 AM</div>
+                    <div class="call-duration">03分 12秒</div>
+                </div>
+            </div>
+            <div class="call-tags">
+                <div class="call-tag tag-compliance">合规</div>
+            </div>
+            <div class="call-summary">
+                AI 正在为您提取本次通话的核心见解...
+            </div>
+            <div class="call-footer">
+                <div class="call-stats">
+                    <div class="call-stat">
+                        <i class="fas fa-lock"></i>
+                        <span>已加密</span>
+                    </div>
+                    <div class="call-stat">
+                        <i class="fas fa-microphone"></i>
+                        <span>已录音</span>
+                    </div>
+                </div>
+                <div class="call-status">纪要生成中...</div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+    <!-- AI纪要页面 -->
+    <div id="ai-summary" class="page">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-bars"></i>
+                <div class="header-title">AI 纪要</div>
+            </div>
+            <div class="header-right">
+                <div style="position: relative;">
+                    <i class="fas fa-bell"></i>
+                    <span style="position: absolute; top: -8px; right: -8px; width: 16px; height: 16px; border-radius: 50%; background-color: #dc2626; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center;">3</span>
+                </div>
+                <i class="fas fa-search" style="margin-left: 16px;"></i>
+            </div>
+        </div>
+        
+        <div class="pending-section">
+            <div class="pending-info">
+                <div class="pending-title">待确认</div>
+                <div class="pending-subtitle">3 条 AI 生成的纪要需要您确认</div>
+            </div>
+            <div class="encrypted-badge">
+                <i class="fas fa-lock"></i>
+                <span>已加密</span>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-info">
+                    <div class="summary-avatar">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="summary-details">
+                        <div class="summary-title">阿波罗项目同步</div>
+                        <div class="summary-meta">机密 • AES-256 已加密</div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <i class="fas fa-ellipsis-v dropdown-toggle"></i>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item">编辑</div>
+                        <div class="dropdown-item">删除</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="audio-player">
+                <div class="player-controls">
+                    <div class="player-time">04:12</div>
+                    <div class="player-progress">
+                        <div class="player-progress-fill"></div>
+                        <div class="player-progress-handle"></div>
+                    </div>
+                    <div class="player-time">12:45</div>
+                </div>
+                <div class="player-buttons">
+                    <div class="player-btn player-btn-other">
+                        <i class="fas fa-redo-alt"></i>
+                    </div>
+                    <div class="player-btn player-btn-play">
+                        <i class="fas fa-pause"></i>
+                    </div>
+                    <div class="player-btn player-btn-other">
+                        <i class="fas fa-undo-alt"></i>
+                    </div>
+                </div>
+                <div class="player-markers">
+                    <div class="player-marker">01:45 风险点</div>
+                    <div class="player-marker active">04:12 关键决策</div>
+                    <div class="player-marker">08:20 预算分配</div>
+                </div>
+            </div>
+            
+            <div class="structured-summary">
+                <div class="summary-section">
+                    <div class="section-heading">会议要点</div>
+                    <div class="summary-list">
+                        <div class="summary-item">确定从 2024 年 1 月起在欧盟市场分阶段推出。</div>
+                        <div class="summary-item">后端架构需要增加 20% 的开销用于实时合规日志记录。</div>
+                        <div class="summary-item">批准了在德国开展初期意识宣传活动的市场预算。</div>
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="section-heading">关键决策</div>
+                    <div class="decision-quote">
+                        "旧版 API 将在第一季度前无条件弃用，以维护加密完整性。"
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="section-heading">待办事项</div>
+                    <div class="action-item">
+                        <div class="action-checkbox"></div>
+                        <div class="action-details">
+                            <div class="action-title">起草合规技术规范</div>
+                            <div class="action-meta">负责人: SARAH K. • 截止日期: 10月28日</div>
+                        </div>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-checkbox"></div>
+                        <div class="action-details">
+                            <div class="action-title">分配第四季度服务器资源</div>
+                            <div class="action-meta">负责人: 技术运营部 • 截止日期: 11月02日</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-footer">
+                <div class="export-buttons">
+                    <div class="export-btn">
+                        <i class="fas fa-file-word"></i>
+                        <span>导出 Word</span>
+                    </div>
+                    <div class="export-btn">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>导出 PDF</span>
+                    </div>
+                </div>
+                <div class="confirm-btn">确认并归档</div>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-info">
+                    <div class="summary-avatar">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="summary-details">
+                        <div class="summary-title">每周销售管线回顾</div>
+                        <div class="summary-meta">2023年10月23日 • 09:00 • 20 分钟</div>
+                    </div>
+                </div>
+                <div class="summary-status">待确认</div>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-info">
+                    <div class="summary-avatar">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="summary-details">
+                        <div class="summary-title">Q4 合规策略会议</div>
+                        <div class="summary-meta">2023年10月24日 • 14:22 • 45 分钟</div>
+                    </div>
+                </div>
+                <div class="summary-status confirmed">已确认</div>
+            </div>
+            <div class="summary-content">
+                会议讨论了跨境数据传输的新监管框架。确定了亚太地区在合规方面的主要风险点...
+            </div>
+            <div class="summary-action">
+                <div class="summary-action-btn">查看完整纪要</div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+    <!-- 我的设置页面 -->
+    <div id="settings" class="page">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-bars"></i>
+                <div class="header-title">我的/设置</div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name">高级用户</div>
+                <div class="user-department">合规部 · Level A</div>
+                <div class="user-id">ID: GV-99281-XC</div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-section-header">已连接设备</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-headphones"></i>
+                    </div>
+                    <div class="settings-item-text">V-Pro 安全耳机</div>
+                </div>
+                <div class="settings-item-value">
+                    <span>已连接</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-section-header">录音与音频</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="settings-item-text">端到端加密</div>
+                </div>
+                <div class="toggle-switch active"></div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-bluetooth"></i>
+                    </div>
+                    <div class="settings-item-text">蓝牙设备</div>
+                </div>
+                <div class="settings-item-value">
+                    <span>1 已连接</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-section-header">消息</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-comment-alt"></i>
+                    </div>
+                    <div class="settings-item-text">5G 消息</div>
+                </div>
+                <div class="toggle-switch"></div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-section-header">数据管理</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <div class="settings-item-text">私有云同步</div>
+                </div>
+                <div class="settings-item-value">
+                    <span>加密备份已激活</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-section-header">安全与隐私</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-window-restore"></i>
+                    </div>
+                    <div class="settings-item-text">屏幕悬浮窗</div>
+                </div>
+                <div class="status-badge status-denied">已拒绝</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <div class="settings-item-text">麦克风权限</div>
+                </div>
+                <div class="status-badge status-allowed">已允许</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <div class="settings-item-text">本地存储</div>
+                </div>
+                <div class="status-badge status-allowed">已允许</div>
+            </div>
+        </div>
+        
+        <div class="logout-section">
+            <div class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>退出登录</span>
+            </div>
+            <div class="session-id">会话 ID: 882-991-001X</div>
+        </div>
+        
+
+    </div>
+    
+    <!-- 联系人详情页面 -->
+    <div id="contact-detail" class="page">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <div class="header-title">联系人详情</div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+        
+        <div class="contact-detail-header">
+            <div class="contact-detail-avatar">W</div>
+            <div class="contact-detail-name">万斯</div>
+            <div class="contact-detail-id">ID: GV-99281-XC</div>
+            <div class="contact-detail-position">首席合规官 (Chief Compliance Officer)</div>
+            <div class="contact-detail-department">合规管理部 · 核心治理组</div>
+            <div class="contact-detail-tags">
+                <div class="contact-detail-tag tag-core">核心决策者</div>
+                <div class="contact-detail-tag tag-highfreq">高频联系</div>
+                <div class="contact-detail-tag tag-interview">重点访谈对象</div>
+            </div>
+        </div>
+        
+        <div class="contact-actions">
+            <div class="contact-action-btn primary">
+                <i class="fas fa-phone contact-action-icon"></i>
+                <div class="contact-action-text">一键拨号</div>
+            </div>
+            <div class="contact-action-btn">
+                <i class="fas fa-book contact-action-icon"></i>
+                <div class="contact-action-text">查看知识库</div>
+            </div>
+        </div>
+        
+        <div class="section-title">近期通话摘要</div>
+        <div class="call-summary-section">
+            <div class="call-summary-header">
+                <div class="call-summary-title">近期通话摘要</div>
+                <div class="encryption-badge">
+                    <i class="fas fa-lock"></i>
+                    <span>端到端加密环境已激活</span>
+                </div>
+            </div>
+            <div class="call-summary-item">
+                <div class="call-summary-item-header">
+                    <div class="call-summary-time">10月24日 14:22</div>
+                    <div class="call-summary-duration">45分钟</div>
+                </div>
+                <div class="call-summary-content">确认了第三季度的预算分配，万斯强调了在合规软件升级上的优先级，并要求在下周前提交初步供应商名单。</div>
+            </div>
+            <div class="call-summary-item">
+                <div class="call-summary-item-header">
+                    <div class="call-summary-time">10月22日 09:15</div>
+                    <div class="call-summary-duration">12分钟</div>
+                </div>
+                <div class="call-summary-content">简短沟通了关于"Q4合规策略"文档的修改意见，重点在于数据跨境传输的免责条款。</div>
+            </div>
+            <div class="call-summary-item">
+                <div class="call-summary-item-header">
+                    <div class="call-summary-time">10月20日 16:40</div>
+                    <div class="call-summary-duration">38分钟</div>
+                </div>
+                <div class="call-summary-content">讨论了年度合规审计的时间表，万斯表达了对目前进度滞后的担忧，建议增加人力投入。</div>
+            </div>
+        </div>
+        
+        <div class="section-title">关联项目 & 文档</div>
+        <div class="related-docs-section">
+            <div class="related-docs-item">
+                <div class="doc-icon pdf">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="doc-info">
+                    <div class="doc-name">Q4 合规策略会议.pdf</div>
+                    <div class="doc-meta">更新于 2小时前 · 1.4 MB</div>
+                </div>
+            </div>
+            <div class="related-docs-item">
+                <div class="doc-icon docx">
+                    <i class="fas fa-file-word"></i>
+                </div>
+                <div class="doc-info">
+                    <div class="doc-name">供应商合规背景调查.docx</div>
+                    <div class="doc-meta">更新于 昨天 18:30 · 842 KB</div>
+                </div>
+            </div>
+            <div class="related-docs-item">
+                <div class="doc-icon xlsx">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <div class="doc-info">
+                    <div class="doc-name">2024 年度合规风险矩阵.xlsx</div>
+                    <div class="doc-meta">更新于 10月20日 · 2.1 MB</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 纪要详情页面 -->
+    <div id="minute-detail" class="page">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <div class="header-title">纪要详情</div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+        
+        <div class="minute-detail-header">
+            <div class="minute-title">阿波罗项目同步</div>
+            <div class="minute-meta">2023年10月24日 • 14:22 • 45分钟</div>
+            <div class="minute-tags">
+                <div class="minute-tag project">项目 X</div>
+                <div class="minute-tag encrypted">AES-256 已加密</div>
+            </div>
+        </div>
+        
+        <div class="minute-audio">
+            <div class="player-controls">
+                <div class="player-time">04:12</div>
+                <div class="player-progress">
+                    <div class="player-progress-fill"></div>
+                    <div class="player-progress-handle"></div>
+                </div>
+                <div class="player-time">12:45</div>
+            </div>
+        </div>
+        
+        <div class="minute-section">
+            <div class="minute-section-title points">会议要点</div>
+            <div class="minute-content">
+                <p>我们讨论了需要重新规划设计的核心出。居通报纸果某期呈 20% 的开销升于天台合日实问题。</p>
+                <p>批复了在进市开辉间聚项目管理透流的担忧。</p>
+            </div>
+        </div>
+        
+        <div class="minute-section">
+            <div class="minute-section-title decisions">关键决策</div>
+            <div class="decision-item">
+                <div class="decision-quote">"国操 API 将在第一季度卒用，以提供开发不余件齐。"</div>
+                <div class="decision-maker">决策人: SARAH K.</div>
+            </div>
+        </div>
+        
+        <div class="minute-section">
+            <div class="minute-section-title actions">待办事项</div>
+            <div class="action-item">
+                <div class="action-checkbox"></div>
+                <div class="action-info">
+                    <div class="action-title">应提合规技术策略</div>
+                    <div class="action-meta">负责人: SARAH K. • 截止时间: 10月25日</div>
+                </div>
+            </div>
+            <div class="action-item">
+                <div class="action-checkbox"></div>
+                <div class="action-info">
+                    <div class="action-title">分段回听要提点服务逻辑</div>
+                    <div class="action-meta">负责人: 技术运营团 • 截止时间: 11月05日</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="minute-section">
+            <div class="minute-section-title timeline">时间节点</div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-time">00:00 - 02:30</div>
+                    <div class="timeline-title">项目概述与背景介绍</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-time">02:30 - 06:15</div>
+                    <div class="timeline-title">核心技术架构讨论</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-time">06:15 - 09:40</div>
+                    <div class="timeline-title">预算与资源分配</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-time">09:40 - 12:45</div>
+                    <div class="timeline-title">后续行动计划</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="minute-section">
+            <div class="minute-section-title transcript">转写文本</div>
+            <div class="transcript-item">
+                <div class="transcript-header">
+                    <div class="transcript-time">00:23</div>
+                    <div class="transcript-speaker">陈思雅</div>
+                </div>
+                <div class="transcript-content">
+                    大家好，今天我们主要讨论阿波罗项目的最新进展。首先，让我们快速回顾一下上周的关键决策点...
+                </div>
+            </div>
+            <div class="transcript-item">
+                <div class="transcript-header">
+                    <div class="transcript-time">01:45</div>
+                    <div class="transcript-speaker">万斯</div>
+                </div>
+                <div class="transcript-content">
+                    关于合规框架，我们需要特别注意第四季度的监管要求变化。这可能会影响我们的部署时间表...
+                </div>
+            </div>
+            <div class="transcript-item">
+                <div class="transcript-header">
+                    <div class="transcript-time">03:12</div>
+                    <div class="transcript-speaker">马库斯</div>
+                </div>
+                <div class="transcript-content">
+                    从技术角度来看，我们建议采用微服务架构。这样可以提高系统的可扩展性和维护性...
+                </div>
+            </div>
+        </div>
+        
+        <div class="minute-actions">
+            <div class="minute-action-btn">
+                <i class="fas fa-file-word"></i>
+                <span>导出 Word</span>
+            </div>
+            <div class="minute-action-btn">
+                <i class="fas fa-file-pdf"></i>
+                <span>导出 PDF</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 无结果页面 -->
+    <div id="no-results" class="page">
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-bars"></i>
+                <div class="header-title">集团V号簿</div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        
+        <div class="sync-status">
+            <div class="sync-text">正在安全同步通讯录...</div>
+            <div class="sync-progress">84%</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" value="122312">
+            <i class="fas fa-microphone voice-icon"></i>
+        </div>
+        
+        <div class="no-results">
+            <div class="no-results-text">找到 0 个结果</div>
+        </div>
+        
+    </div>
+    
+    <!-- 拨号盘弹窗 -->
+    <div id="dialer-modal" class="dialer-modal" style="display: none;">
+        <div class="dialer-modal-content">
+            <div class="dialer-header">
+                <div class="dialer-number" id="dialer-number"></div>
+                <div class="dialer-features">
+                    <div class="dialer-feature recording active" id="recording-toggle">
+                        <i class="fas fa-microphone"></i>
+                        <span>通话录音</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dialer-keypad">
+                <div class="keypad-row">
+                    <div class="keypad-key">1</div>
+                    <div class="keypad-key">2</div>
+                    <div class="keypad-key">3</div>
+                </div>
+                <div class="keypad-row">
+                    <div class="keypad-key">4</div>
+                    <div class="keypad-key">5</div>
+                    <div class="keypad-key">6</div>
+                </div>
+                <div class="keypad-row">
+                    <div class="keypad-key">7</div>
+                    <div class="keypad-key">8</div>
+                    <div class="keypad-key">9</div>
+                </div>
+                <div class="keypad-row">
+                    <div class="keypad-key">*</div>
+                    <div class="keypad-key">0</div>
+                    <div class="keypad-key">#</div>
+                </div>
+            </div>
+            <div class="dialer-actions">
+                <div class="dialer-action keypad-key more">...</div>
+                <div class="dialer-action call-btn">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="dialer-action keypad-key backspace">
+                    <i class="fas fa-backspace"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <i class="fas fa-address-book nav-icon"></i>
+            <div class="nav-text">通讯录</div>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-phone-alt nav-icon"></i>
+            <div class="nav-text">通话记录</div>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-clipboard-list nav-icon"></i>
+            <div class="nav-text">AI 纪要</div>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cog nav-icon"></i>
+            <div class="nav-text">我的/设置</div>
+        </div>
+    </div>
+    
+    <!-- 来电弹窗 -->
+    <div id="incoming-call" class="incoming-call" style="display: none;">
+        <div class="incoming-call-header">
+            <div class="incoming-call-title">来电中...</div>
+            <div class="incoming-call-close" id="incoming-call-close">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="caller-info">
+            <div class="caller-avatar">C</div>
+            <div class="caller-name">陈思雅</div>
+            <div class="caller-department">全球战略部</div>
+            <div class="caller-tags">
+                <div class="call-tag tag-project">项目 X</div>
+                <div class="call-tag tag-follow">跟进</div>
+            </div>
+        </div>
+        <div class="call-summary-popup">
+            <div class="call-summary-title">最近通话摘要</div>
+            <div class="call-summary-text">
+                上次通话讨论了阿波罗项目的进度和Q4预算分配方案，需要尽快完成技术架构评审...
+            </div>
+        </div>
+        <div class="call-actions-popup">
+            <div class="call-action-btn-popup reject">
+                <i class="fas fa-phone-slash"></i>
+                <span>拒接</span>
+            </div>
+            <div class="call-action-btn-popup accept">
+                <i class="fas fa-phone"></i>
+                <span>接听</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 来电悬浮窗 -->
+    <div id="call-floating" class="call-floating" style="display: none;">
+        <div class="call-floating-avatar">C</div>
+        <div class="call-floating-info">
+            <div class="call-floating-name">陈思雅</div>
+            <div class="call-floating-status">来电中...</div>
+        </div>
+    </div>
+    
+    <!-- 等待接听页面 -->
+    <div id="call-waiting" class="call-active-page" style="display: none;">
+        <div class="call-active-header">
+            <div class="call-active-status">拨号中...</div>
+            <div class="call-active-timer" id="waiting-call-timer">00:00</div>
+        </div>
+        <div class="call-active-content">
+            <div class="call-active-avatar" id="waiting-caller-avatar">C</div>
+            <div class="call-active-name" id="waiting-caller-name">陈思雅</div>
+            <div class="call-active-department" id="waiting-caller-department">全球战略部</div>
+        </div>
+        <div class="call-active-actions">
+            <div class="call-active-btn">
+                <div class="call-active-icon mute">
+                    <i class="fas fa-microphone-slash"></i>
+                </div>
+                <span>静音</span>
+            </div>
+            <div class="call-active-btn">
+                <div class="call-active-icon recording active">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <span>录音</span>
+            </div>
+            <div class="call-active-btn">
+                <div class="call-active-icon speaker">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <span>免提</span>
+            </div>
+        </div>
+        <div class="call-active-hangup">
+            <div class="call-hangup-btn" id="waiting-hangup-btn">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
+            <span>挂断</span>
+        </div>
+    </div>
+    
+    <!-- 通话中页面 -->
+    <div id="call-active" class="call-active-page" style="display: none;">
+        <div class="call-active-header">
+            <div class="call-active-status">通话中</div>
+            <div class="call-active-timer" id="call-timer">00:00</div>
+        </div>
+        <div class="call-active-content">
+            <div class="call-active-avatar">C</div>
+            <div class="call-active-name">陈思雅</div>
+            <div class="call-active-department">全球战略部</div>
+        </div>
+        <div class="call-active-actions">
+            <div class="call-active-btn">
+                <div class="call-active-icon mute">
+                    <i class="fas fa-microphone-slash"></i>
+                </div>
+                <span>静音</span>
+            </div>
+            <div class="call-active-btn">
+                <div class="call-active-icon recording active">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <span>录音</span>
+            </div>
+            <div class="call-active-btn">
+                <div class="call-active-icon speaker">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <span>免提</span>
+            </div>
+        </div>
+        <div class="call-active-hangup">
+            <div class="call-hangup-btn" id="hangup-btn">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
+            <span>挂断</span>
+        </div>
+    </div>
+    
+    <script>
+        // 页面切换
+        const pages = document.querySelectorAll('.page');
+        const navItems = document.querySelectorAll('.nav-item');
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 移除所有导航项的active类
+                navItems.forEach(nav => nav.classList.remove('active'));
+                // 添加当前导航项的active类
+                this.classList.add('active');
+                
+                // 隐藏所有页面
+                pages.forEach(page => page.classList.remove('active'));
+                
+                // 显示对应页面
+                const navText = this.querySelector('.nav-text').textContent.trim();
+                let pageId;
+                if (navText === '通讯录') {
+                    pageId = 'directory';
+                } else if (navText === '通话记录') {
+                    pageId = 'calls';
+                } else if (navText === 'AI 纪要') {
+                    pageId = 'ai-summary';
+                } else if (navText === '我的/设置') {
+                    pageId = 'settings';
+                }
+                
+                if (pageId) {
+                    document.getElementById(pageId).classList.add('active');
+                }
+            });
+        });
+        
+        // 模拟来电弹窗
+        setTimeout(() => {
+            document.getElementById('incoming-call').style.display = 'block';
+        }, 5000);
+        
+        // 接听/拒接电话
+        document.querySelector('.call-action-btn-popup.accept').addEventListener('click', function() {
+            document.getElementById('incoming-call').style.display = 'none';
+        });
+        
+        document.querySelector('.call-action-btn-popup.reject').addEventListener('click', function() {
+            document.getElementById('incoming-call').style.display = 'none';
+        });
+        
+        // 模拟联系人点击
+        document.querySelectorAll('.contact-card').forEach(card => {
+            card.addEventListener('click', function() {
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById('contact-detail').classList.add('active');
+            });
+        });
+        
+        // 模拟查看完整纪要
+        document.querySelectorAll('.summary-action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 记录来源页面
+                sessionStorage.setItem('fromPage', 'ai-summary');
+                
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById('minute-detail').classList.add('active');
+            });
+        });
+        
+        // 模拟搜索无结果
+        document.querySelector('.search-input').addEventListener('input', function() {
+            if (this.value === '122312') {
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById('no-results').classList.add('active');
+                // 更新导航栏状态，保持在通讯录页面
+                navItems.forEach(nav => nav.classList.remove('active'));
+                document.querySelector('.nav-item:first-child').classList.add('active');
+            } else {
+                // 搜索内容清空时，返回通讯录页面
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById('directory').classList.add('active');
+                // 更新导航栏状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                document.querySelector('.nav-item:first-child').classList.add('active');
+            }
+        });
+        
+        // 通话记录点击跳转至纪要详情
+        document.querySelectorAll('.call-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // 记录来源页面
+                sessionStorage.setItem('fromPage', 'calls');
+                
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById('minute-detail').classList.add('active');
+                // 更新导航栏状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+            });
+        });
+        
+        // 切换开关
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+        
+        // 过滤按钮
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 播放器控制
+        document.querySelector('.player-btn-play').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-pause')) {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            } else {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            }
+        });
+        
+        // 播放器标记点
+        document.querySelectorAll('.player-marker').forEach(marker => {
+            marker.addEventListener('click', function() {
+                document.querySelectorAll('.player-marker').forEach(m => m.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 下拉菜单交互
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dropdown = this.closest('.dropdown');
+                // 切换下拉菜单显示/隐藏
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // 点击页面其他地方关闭下拉菜单
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
+        });
+        
+        // 拨号悬浮窗交互
+        const dialerFloatingBtn = document.getElementById('dialer-floating-btn');
+        const dialerModal = document.getElementById('dialer-modal');
+        const dialerNumber = document.getElementById('dialer-number');
+        
+        // 点击悬浮窗显示拨号盘
+        dialerFloatingBtn.addEventListener('click', function() {
+            dialerModal.style.display = 'flex';
+        });
+        
+        // 点击拨号盘外的区域关闭拨号盘
+        dialerModal.addEventListener('click', function(e) {
+            if (e.target === dialerModal) {
+                dialerModal.style.display = 'none';
+            }
+        });
+        
+        // 拨号盘数字键功能
+        document.querySelectorAll('.keypad-key').forEach(key => {
+            key.addEventListener('click', function() {
+                const value = this.textContent.trim();
+                if (value.match(/[0-9*#]/)) {
+                    let currentNumber = dialerNumber.textContent.replace(/\s/g, '');
+                    if (currentNumber.length < 11) {
+                        currentNumber += value;
+                        // 格式化电话号码
+                        if (currentNumber.length === 11) {
+                            currentNumber = currentNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3');
+                        }
+                        dialerNumber.textContent = currentNumber;
+                    }
+                }
+            });
+        });
+        
+        // 退格键功能
+        document.querySelector('.backspace').addEventListener('click', function() {
+            let currentNumber = dialerNumber.textContent.replace(/\s/g, '');
+            if (currentNumber.length > 0) {
+                currentNumber = currentNumber.slice(0, -1);
+                // 格式化电话号码
+                if (currentNumber.length === 11) {
+                    currentNumber = currentNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3');
+                }
+                dialerNumber.textContent = currentNumber;
+            }
+        });
+        
+        // 通话按钮功能
+        document.querySelector('.call-btn').addEventListener('click', function() {
+            // 模拟拨打电话
+            alert('正在拨打：' + dialerNumber.textContent);
+            dialerModal.style.display = 'none';
+        });
+        
+        // 来电弹窗交互
+        const incomingCall = document.getElementById('incoming-call');
+        const incomingCallClose = document.getElementById('incoming-call-close');
+        const callFloating = document.getElementById('call-floating');
+        
+        // 点击关闭按钮，隐藏来电弹窗，显示悬浮窗
+        incomingCallClose.addEventListener('click', function() {
+            incomingCall.style.display = 'none';
+            callFloating.style.display = 'flex';
+        });
+        
+        // 点击悬浮窗，显示来电弹窗，隐藏悬浮窗
+        callFloating.addEventListener('click', function() {
+            callFloating.style.display = 'none';
+            incomingCall.style.display = 'block';
+        });
+        
+        // 接听电话后，隐藏来电弹窗和悬浮窗，显示通话中页面
+        document.querySelector('.call-action-btn-popup.accept').addEventListener('click', function() {
+            incomingCall.style.display = 'none';
+            callFloating.style.display = 'none';
+            document.getElementById('call-active').style.display = 'flex';
+            startCallTimer();
+        });
+        
+        // 通话计时器
+        let callTimerInterval;
+        let callSeconds = 0;
+        
+        function startCallTimer() {
+            callSeconds = 0;
+            updateCallTimer();
+            callTimerInterval = setInterval(updateCallTimer, 1000);
+        }
+        
+        function updateCallTimer() {
+            callSeconds++;
+            const minutes = Math.floor(callSeconds / 60).toString().padStart(2, '0');
+            const seconds = (callSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('call-timer').textContent = `${minutes}:${seconds}`;
+        }
+        
+        function stopCallTimer() {
+            clearInterval(callTimerInterval);
+            callSeconds = 0;
+        }
+        
+        // 挂断电话
+        document.getElementById('hangup-btn').addEventListener('click', function() {
+            document.getElementById('call-active').style.display = 'none';
+            stopCallTimer();
+            document.getElementById('call-timer').textContent = '00:00';
+        });
+        
+        // 拒接电话后，隐藏来电弹窗和悬浮窗
+        document.querySelector('.call-action-btn-popup.reject').addEventListener('click', function() {
+            incomingCall.style.display = 'none';
+            callFloating.style.display = 'none';
+        });
+        
+        // 录音选项点击切换
+        const recordingToggle = document.getElementById('recording-toggle');
+        recordingToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+        
+        // 静音、录音和免提按钮点击切换常亮
+        document.querySelectorAll('.call-active-icon.mute, .call-active-icon.recording, .call-active-icon.speaker').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+        
+        // 等待接听页面的静音、录音和免提按钮点击切换常亮
+        document.querySelectorAll('#call-waiting .call-active-icon.mute, #call-waiting .call-active-icon.recording, #call-waiting .call-active-icon.speaker').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+        
+        // 联系人详情页面的一键拨号功能
+        document.querySelector('.contact-action-btn.primary').addEventListener('click', function() {
+            const contactDetail = document.querySelector('.contact-detail-header');
+            const contactName = contactDetail.querySelector('.contact-detail-name').textContent;
+            const contactPosition = contactDetail.querySelector('.contact-detail-position').textContent;
+            const contactAvatar = contactDetail.querySelector('.contact-detail-avatar').textContent;
+            
+            // 提取部门信息（从contact-detail-department中获取）
+            const contactDepartment = contactDetail.querySelector('.contact-detail-department').textContent;
+            
+            // 填充等待接听页面的信息
+            document.getElementById('waiting-caller-avatar').textContent = contactAvatar;
+            document.getElementById('waiting-caller-name').textContent = contactName;
+            document.getElementById('waiting-caller-department').textContent = contactDepartment;
+            
+            // 显示等待接听页面
+            document.getElementById('call-waiting').style.display = 'flex';
+        });
+        
+        // 通讯录联系人拨号功能
+        document.querySelectorAll('.contact-call').forEach(callBtn => {
+            callBtn.addEventListener('click', function() {
+                const contactCard = this.closest('.contact-card');
+                const contactName = contactCard.querySelector('.contact-name').textContent;
+                const contactPosition = contactCard.querySelector('.contact-position').textContent;
+                const contactAvatar = contactCard.querySelector('.contact-avatar');
+                
+                // 获取头像内容（可能是图标或首字母）
+                let avatarContent = 'U';
+                const avatarIcon = contactAvatar.querySelector('i');
+                if (avatarIcon) {
+                    // 如果是图标，使用首字母
+                    avatarContent = contactName.charAt(0).toUpperCase();
+                } else {
+                    // 如果是首字母，直接使用
+                    avatarContent = contactAvatar.textContent;
+                }
+                
+                // 填充等待接听页面的信息
+                document.getElementById('waiting-caller-avatar').textContent = avatarContent;
+                document.getElementById('waiting-caller-name').textContent = contactName;
+                document.getElementById('waiting-caller-department').textContent = contactPosition;
+                
+                // 显示等待接听页面
+                document.getElementById('call-waiting').style.display = 'flex';
+            });
+        });
+        
+        // 等待接听页面挂断按钮功能
+        document.getElementById('waiting-hangup-btn').addEventListener('click', function() {
+            // 隐藏等待接听页面
+            document.getElementById('call-waiting').style.display = 'none';
+            
+            // 显示通讯录页面
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('directory').classList.add('active');
+        });
+        
+        // 通讯录部门折叠和展开功能
+        document.querySelectorAll('.department-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const toggle = this.querySelector('.department-toggle');
+                
+                content.classList.toggle('collapsed');
+                toggle.classList.toggle('collapsed');
+            });
+        });
+        
+        // 返回按钮功能
+        document.querySelectorAll('.back-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                pages.forEach(page => page.classList.remove('active'));
+                
+                // 获取当前页面的ID
+                const currentPage = this.closest('.page').id;
+                
+                if (currentPage === 'contact-detail') {
+                    // 从联系人详情页面返回通讯录页面
+                    document.getElementById('directory').classList.add('active');
+                    // 更新导航栏状态
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    document.querySelector('.nav-item:first-child').classList.add('active');
+                } else if (currentPage === 'minute-detail') {
+                    // 检查来源页面
+                    const fromPage = sessionStorage.getItem('fromPage');
+                    
+                    if (fromPage === 'calls') {
+                        // 从通话记录页面进入，返回通话记录页面
+                        document.getElementById('calls').classList.add('active');
+                        // 更新导航栏状态
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+                        // 清除来源页面记录
+                        sessionStorage.removeItem('fromPage');
+                    } else if (fromPage === 'ai-summary') {
+                        // 从AI纪要页面进入，返回AI纪要页面
+                        document.getElementById('ai-summary').classList.add('active');
+                        // 更新导航栏状态
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+                        // 清除来源页面记录
+                        sessionStorage.removeItem('fromPage');
+                    } else {
+                        // 从其他页面进入，默认返回AI纪要页面
+                        document.getElementById('ai-summary').classList.add('active');
+                        // 更新导航栏状态
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
